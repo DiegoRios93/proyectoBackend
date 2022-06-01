@@ -1,8 +1,8 @@
 import { Router } from "express";
 import Api from "../apiClass";
 const router = Router()
-const api = new Api("./src/dataBase/carrito.json")
-const prod = new Api("./src/dataBase/productos.json")
+const api = new Api("src/dataBase/carrito.json")
+const prod = new Api("src/dataBase/productos.json")
 
 //Obtener carritos
 router.get('/', async(req,res)=>{
@@ -27,23 +27,24 @@ router.get('/:id/productos', async(req,res)=>{
 
 //Crear carritos
 router.post('/', async(req,res)=>{
-    const producto = await api.create()
+    const producto = await api.createCart()
     res.json(producto)
 })
 
 //agregar productos al carrito
 router.post('/:id/:idProd', async(req,res)=>{
-    let {id} = req.params
-    let {idProd} = req.params
+    let {id,idProd} = req.params
     id= parseInt(id)
     idProd= parseInt(idProd)
-    const carrito = await api.findById(id)
-    const producto = await prod.findById(idProd)
-    console.log(carrito)
+    let carritos = await api.findById(id)
+    let producto = await prod.findById(idProd)
+    console.log(carritos)
     console.log(producto)
+
     if(producto){
-        await carrito.products.push(producto)
-        res.json(carrito)
+        const agregarP = carritos.products.push(producto)
+        await api.saveProd(agregarP)
+        res.json(carritos)
     }else{
         res.send("El producto que quiere agregar no existe")
     }

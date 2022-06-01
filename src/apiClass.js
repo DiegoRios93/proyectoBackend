@@ -1,3 +1,4 @@
+import { timeStamp } from 'console';
 import fs from 'fs'
 
 export default class Api{
@@ -90,17 +91,28 @@ export default class Api{
         try {
             const carritos = await this.findAll()
             let id
-            todos.length===0
+            carritos.length===0
             ? id=1
             : id = carritos[carritos.length-1].id+1
             let carrito = {
                 id,
-                timestamp: new Date().getDay(),
+                timestamp: new Date(),
                 products : [] 
             }
             carritos.push(carrito)
             await fs.promises.writeFile(this.rutaBD, JSON.stringify(carritos))
             return id
+        } catch (error) {
+            console.log(`Error : ${error}`)
+        }
+    }
+
+    //guardar prod en el carrito
+    async saveProd(){
+        try {
+            let carritos = await this.findAll()
+            await fs.promises.writeFile(this.rutaBD, JSON.stringify(carritos))
+            return carritos
         } catch (error) {
             console.log(`Error : ${error}`)
         }
