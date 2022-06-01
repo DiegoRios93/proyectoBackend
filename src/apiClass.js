@@ -1,4 +1,3 @@
-import res from 'express/lib/response';
 import fs from 'fs'
 
 export default class Api{
@@ -52,7 +51,7 @@ export default class Api{
                 await fs.promises.writeFile(this.rutaBD, JSON.stringify(todos))
                 return resultado
             }else{
-                console.log("producto no encontrado")
+                console.log("No se puede modificar el producto, porque no fue encontrado")
             }
         } catch (error) {
             console.log(`Error : ${error}`)
@@ -64,11 +63,11 @@ export default class Api{
             const todos = await this.findAll()
             let resultado = todos.find(e=>e.id==id)
             if(resultado){
-                const todos = todos.filter(producto=>producto.id ==! id);
-                await fs.promises.writeFile(this.rutaBD, JSON.stringify(todos))
-                return todos 
+                let newArray = todos.filter(producto=>producto.id !== id);
+                await fs.promises.writeFile(this.rutaBD, JSON.stringify(newArray))
+                return newArray
             }else{
-                 console.log("Producto no encontrado")
+                console.log("Producto no encontrado")
             }
         } catch (error) {
             console.log(error);
@@ -86,4 +85,24 @@ export default class Api{
         }
     }
 
+    //Crear carrito
+    async createCart(){
+        try {
+            const carritos = await this.findAll()
+            let id
+            todos.length===0
+            ? id=1
+            : id = carritos[carritos.length-1].id+1
+            let carrito = {
+                id,
+                timestamp: new Date().getDay(),
+                products : [] 
+            }
+            carritos.push(carrito)
+            await fs.promises.writeFile(this.rutaBD, JSON.stringify(carritos))
+            return id
+        } catch (error) {
+            console.log(`Error : ${error}`)
+        }
+    }
 }

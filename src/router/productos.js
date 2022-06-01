@@ -13,6 +13,8 @@ function adminOrClient(req, res, next){
     }
 }
 
+//rutas con peticiones
+
 router.get('/', async(req,res)=>{
     const productos = await api.findAll()
     res.json(productos)
@@ -38,9 +40,10 @@ router.put('/:id', adminOrClient, async(req,res)=>{
 })
 
 router.delete('/:id', async(req,res)=>{
-    const {id} = req.params
-    const producto =  await api.deleteById(id)
-    res.send("producto eliminado")
+    let {id} = req.params
+    id= parseInt(id)
+    const productoEliminado = await api.deleteById(id)
+    res.json(productoEliminado)
 })
 
 export default router
