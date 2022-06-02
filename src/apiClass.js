@@ -108,13 +108,28 @@ export default class Api{
     }
 
     //guardar prod en el carrito
-    async saveProd(){
-        try {
-            let carritos = await this.findAll()
-            await fs.promises.writeFile(this.rutaBD, JSON.stringify(carritos))
-            return carritos
-        } catch (error) {
-            console.log(`Error : ${error}`)
+    // async saveProd(obj){
+    //     try {
+    //         let carritos = await this.findAll()
+    //         carritos.push(obj)
+    //         console.log(carritos)
+    //         await fs.promises.writeFile(this.rutaBD, JSON.stringify(carritos))
+    //         return carritos
+    //     } catch (error) {
+    //         console.log(`Error : ${error}`)
+    //     }
+    // }
+
+    async saveProd(array){
+        try{
+            const contenido = await fs.promises.readFile(this.rutaBD, 'utf-8');
+            let arrayCarritos = JSON.parse(contenido);
+            arrayCarritos = array;
+            await fs.promises.writeFile(this.rutaBD, `${JSON.stringify(arrayCarritos)}`);
+            return arrayCarritos
+        }
+        catch(err){
+            console.log("save error",err)
         }
     }
 }
