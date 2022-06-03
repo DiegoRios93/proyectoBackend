@@ -91,6 +91,39 @@ router.delete('/:id', async(req,res)=>{
     const productoEliminado = await api.deleteById(id)
     res.json(productoEliminado)
 })
+// Eliminar producto en particular de un carrito
+router.delete('/:id/productos/:id_prod', async (req, res) => {
+    let {id,id_prod} = req.params
+    id= parseInt(id)
+    id_prod= parseInt(id_prod)
+    let carritos = await api.findAll()
+    const arrayIndexPorId = [] // aqui me guardo para cada elemento su id y el indice que tiene en el array
+    carritos.forEach((element, index) => {
+        arrayIndexPorId.push({elemId: element.id, elemIndex:index})
+    }); // uso esto para guardar id e indice en array
+    const carritoASuplirIdIndex = arrayIndexPorId.find(carrito => carrito.elemId === parseInt(id)); // busco el objeto que tiene el id del objeto a borrar y el indice del objeto en el array productos
+    
+    if (carritoASuplirIdIndex){
+        const carrito = await api.findById(parseInt(id));
+        const productoBuscadoCarrito = carrito.products.find(producto => producto.id === parseInt(id_prod))
+        if(productoBuscadoCarrito){
+            const arrayCarritoMenosProd = carrito.products.filter(producto => producto.id !== parseInt(id_prod));
+            carrito.products = arrayCarritoMenosProd;
+
+            const indexElemSuplir = carritoASuplirIdIndex.elemIndex; // obtengo el indice en el array carritos del objeto a borrar (objeto cuyo id es el que se corresponde con el que quiero borrar)
+            carritos.splice(indexElemSuplir, 1, carrito)
+            
+            await api.saveProd(carritos);
+            res.json ({mensaje: `productos con id ${id_prod} eliminados del carrito`})
+            
+        } else{
+            res.json({mensaje: 'no existe el producto que busca borrar'})
+        }
+        
+    }else{
+        res.send("no existe el carrito que busca modificar")
+    }
+})
 
 export default router
 
