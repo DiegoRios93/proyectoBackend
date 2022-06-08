@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import productosRoutes from './router/productos' 
 import carritoRoutes from './router/carrito' 
 
+
 const app =  express()
 
 app.use(express.json())

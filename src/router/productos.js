@@ -1,7 +1,10 @@
 import { Router } from "express";
 import Api from "../apiClass";
+import { options } from "../dataBase/configDB.js";
 const router = Router()
-const api = new Api("./src/dataBase/productos.json")
+//const api = new Api("./src/dataBase/productos.json")
+const api = new Api(options.mariaDB, 'PRODUCTOS')
+
 
 const isAdmin = true
 //middleware
@@ -32,12 +35,12 @@ router.post('/',adminOrClient, async(req,res)=>{
     res.json(producto)
 })
 
-router.put('/:id', adminOrClient, async(req,res)=>{
-    const {id} = req.params;
-    const {title, price, thumbnail} = req.body;
-    const producto = await api.modifyProduct(id, title, price, thumbnail)
-    res.json(producto)
-})
+// router.put('/:id', adminOrClient, async(req,res)=>{
+//     const {id} = req.params;
+//     const {title, price, thumbnail} = req.body;
+//     const producto = await api.modifyProduct(id, title, price, thumbnail)
+//     res.json(producto)
+// })
 
 router.delete('/:id', async(req,res)=>{
     let {id} = req.params
